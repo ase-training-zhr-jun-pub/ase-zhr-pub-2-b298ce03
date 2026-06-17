@@ -14,9 +14,9 @@ Anforderungen an den Booking Service:
 
 - REST API (JSON über HTTPS)
 - Kompatibilität mit dateibasierter Datenbank (SQLite) für einfaches Deployment
-- Perspektivisch: Okta-Integration für Single Sign-On (INNOQ-Mitarbeiter)
 - Schnelle Entwicklung
 - Zuverlässige Verhinderung von Doppelbuchungen (QS-2: 99,9%)
+- Perspektivisch: Okta-Integration für Single Sign-On — für den Prototypen durch Basic-Auth ersetzt (siehe ADR-004)
 
 ---
 
@@ -85,4 +85,5 @@ Wir verwenden **ASP.NET Core (.NET 8, C#)** als Technologie-Stack für den Booki
 - Das Backend-Projekt liegt unter `backend/` und wird als .NET 8 Web API Projekt angelegt.
 - Datenbank: SQLite über EF Core mit Code-First Migrationen.
 - OpenAPI-Spezifikation wird automatisch aus den Controllern/Minimal-API-Definitionen generiert.
+- **Prototyp**: Authentifizierung über Basic-Auth ohne Passwörter (ADR-004); Okta-Integration ist für den produktiven Betrieb vorgesehen.
 - Bei Okta-Integration: `Microsoft.AspNetCore.Authentication.OpenIdConnect` + Okta-spezifische Konfiguration in `appsettings.json`.
