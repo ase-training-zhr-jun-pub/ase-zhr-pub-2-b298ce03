@@ -11,6 +11,11 @@ const proxyUrl = proxyUri ? new URL(proxyUri.replace("{{port}}", "5173")) : null
 // z.B. "/t/<token>/s/<session>/proxy/5173/" — lokal undefined.
 const base = proxyUrl ? proxyUrl.pathname : "/"
 
+// Backend URL for API calls — exposes as __BACKEND_URL__ global in client code.
+const backendBase = proxyUri
+  ? new URL(proxyUri.replace("{{port}}", "5000")).href.replace(/\/$/, "")
+  : "http://localhost:5000"
+
 /**
  * Vite-Dev nutzt überall absolute Pfade (z.B. "/@vite/client", "/src/...").
  * Über `base` bekommen diese URLs den Proxy-Prefix vorangestellt, sodass der
@@ -41,6 +46,9 @@ function proxyBasePrefix(): Plugin {
 
 export default defineConfig({
   base,
+  define: {
+    __BACKEND_URL__: JSON.stringify(backendBase),
+  },
   plugins: [react(), tailwindcss(), proxyBasePrefix()],
   server: {
     host: "0.0.0.0",

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import { ArrowRight, Check, MapPin } from "lucide-react"
 import {
   Card,
@@ -16,29 +16,63 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
-import { arbeitsplaetze, standorte } from "@/lib/mock-data"
 import { cn } from "@/lib/utils"
+import {
+  fetchLocations,
+  fetchWorkplaces,
+  createBooking,
+  type Location,
+  type Workplace,
+} from "@/lib/api"
+import { CURRENT_USER_ID } from "@/lib/current-user"
 
 export function ArbeitsplatzBuchen() {
+  const [locations, setLocations] = useState<Location[]>([])
+  const [workplaces, setWorkplaces] = useState<Workplace[]>([])
+  const [loadingWorkplaces, setLoadingWorkplaces] = useState(false)
   const [standortId, setStandortId] = useState("koeln")
-  const [datum, setDatum] = useState("2026-06-17")
+  const [datum, setDatum] = useState(new Date().toISOString().slice(0, 10))
   const [selectedId, setSelectedId] = useState<string | null>(null)
-  const [confirmed, setConfirmed] = useState(false)
+  const [booking, setBooking] = useState<"idle" | "loading" | "done" | "error">("idle")
 
-  const plaetze = useMemo(
-    () => arbeitsplaetze.filter((a) => a.standortId === standortId),
-    [standortId],
-  )
+  useEffect(() => {
+    fetchLocations().then(setLocations).catch(console.error)
+  }, [])
 
-  const selected = plaetze.find((a) => a.id === selectedId) ?? null
+  useEffect(() => {
+    setLoadingWorkplaces(true)
+    fetchWorkplaces(standortId, datum)
+      .then(setWorkplaces)
+      .catch(console.error)
+      .finally(() => setLoadingWorkplaces(false))
+  }, [standortId, datum])
+
+  const selected = workplaces.find((w) => w.id === selectedId) ?? null
 
   function handleSelect(id: string) {
     setSelectedId((current) => (current === id ? null : id))
+    setBooking("idle")
+  }
+
+  async function handleConfirm() {
+    if (!selected) return
+    setBooking("loading")
+    try {
+      await createBooking({
+        type: "Workplace",
+        resourceId: selected.id,
+        locationId: standortId,
+        userId: CURRENT_USER_ID,
+        date: datum,
+      })
+      setBooking("done")
+    } catch {
+      setBooking("error")
+    }
   }
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
-      {/* Kopf + Schrittanzeige */}
       <div>
         <h1 className="text-2xl font-semibold">Arbeitsplatz buchen</h1>
         <p className="text-muted-foreground">
@@ -46,28 +80,26 @@ export function ArbeitsplatzBuchen() {
         </p>
       </div>
 
-      {/* Filter: Standort + Datum */}
       <Card>
         <CardContent className="flex flex-wrap items-end gap-4 pt-6">
           <div className="space-y-1.5">
             <label className="text-sm font-medium">Standort</label>
             <Select
-              items={standorte.map((s) => ({ value: s.id, label: s.name }))}
               value={standortId}
               onValueChange={(v) => {
                 if (!v) return
                 setStandortId(v)
                 setSelectedId(null)
-                setConfirmed(false)
+                setBooking("idle")
               }}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Standort" />
               </SelectTrigger>
               <SelectContent>
-                {standorte.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.name}
+                {locations.map((l) => (
+                  <SelectItem key={l.id} value={l.id}>
+                    {l.name}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -85,7 +117,7 @@ export function ArbeitsplatzBuchen() {
               onChange={(e) => {
                 setDatum(e.target.value)
                 setSelectedId(null)
-                setConfirmed(false)
+                setBooking("idle")
               }}
               className="h-9 rounded-lg border border-input bg-transparent px-3 text-sm outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50"
             />
@@ -93,73 +125,73 @@ export function ArbeitsplatzBuchen() {
         </CardContent>
       </Card>
 
-      {/* Arbeitsplätze als Karten-Raster */}
       <div>
         <h2 className="mb-3 text-sm font-semibold text-muted-foreground">
           Verfügbare Arbeitsplätze
         </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {plaetze.map((a) => {
-            const isSelected = a.id === selectedId
-            return (
-              <Card
-                key={a.id}
-                className={cn(
-                  "transition-colors",
-                  a.belegt && "opacity-60",
-                  isSelected && "border-primary ring-1 ring-primary",
-                )}
-              >
-                <CardHeader>
-                  <div className="flex items-center justify-between gap-2">
-                    <CardTitle className="text-base">{a.id}</CardTitle>
-                    {a.belegt ? (
-                      <Badge variant="destructive">belegt</Badge>
-                    ) : (
-                      <Badge className="bg-emerald-600 text-white">frei</Badge>
-                    )}
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    {a.bezeichnung}
-                  </p>
-                </CardHeader>
-                <CardContent className="space-y-2 text-sm">
-                  <p className="flex items-center gap-1.5 text-muted-foreground">
-                    <MapPin className="size-3.5" /> {a.etage}
-                  </p>
-                  <div className="flex flex-wrap gap-1.5">
-                    {a.ausstattung.map((aus) => (
-                      <Badge key={aus} variant="outline">
-                        {aus}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter>
-                  <Button
-                    variant={isSelected ? "default" : "outline"}
-                    className="w-full"
-                    disabled={a.belegt}
-                    onClick={() => handleSelect(a.id)}
-                  >
-                    {a.belegt ? (
-                      "Belegt"
-                    ) : isSelected ? (
-                      <>
-                        <Check className="size-4" /> Ausgewählt
-                      </>
-                    ) : (
-                      "Auswählen"
-                    )}
-                  </Button>
-                </CardFooter>
-              </Card>
-            )
-          })}
-        </div>
+        {loadingWorkplaces ? (
+          <p className="text-sm text-muted-foreground">Wird geladen…</p>
+        ) : (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {workplaces.map((w) => {
+              const isSelected = w.id === selectedId
+              return (
+                <Card
+                  key={w.id}
+                  className={cn(
+                    "transition-colors",
+                    w.occupied && "opacity-60",
+                    isSelected && "border-primary ring-1 ring-primary",
+                  )}
+                >
+                  <CardHeader>
+                    <div className="flex items-center justify-between gap-2">
+                      <CardTitle className="text-base">{w.id}</CardTitle>
+                      {w.occupied ? (
+                        <Badge variant="destructive">belegt</Badge>
+                      ) : (
+                        <Badge className="bg-emerald-600 text-white">frei</Badge>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">{w.name}</p>
+                  </CardHeader>
+                  <CardContent className="space-y-2 text-sm">
+                    <p className="flex items-center gap-1.5 text-muted-foreground">
+                      <MapPin className="size-3.5" /> {w.floor}
+                    </p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {w.equipment.map((e) => (
+                        <Badge key={e} variant="outline">
+                          {e}
+                        </Badge>
+                      ))}
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button
+                      variant={isSelected ? "default" : "outline"}
+                      className="w-full"
+                      disabled={w.occupied}
+                      onClick={() => handleSelect(w.id)}
+                    >
+                      {w.occupied ? (
+                        "Belegt"
+                      ) : isSelected ? (
+                        <>
+                          <Check className="size-4" /> Ausgewählt
+                        </>
+                      ) : (
+                        "Auswählen"
+                      )}
+                    </Button>
+                  </CardFooter>
+                </Card>
+              )
+            })}
+          </div>
+        )}
       </div>
 
-      {/* Auswahl-Leiste + Bestätigen */}
       <div className="sticky bottom-0 -mx-4 border-t bg-card/95 px-4 py-3 backdrop-blur md:-mx-8 md:px-8">
         <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3">
           <div className="min-w-0 text-sm">
@@ -167,10 +199,10 @@ export function ArbeitsplatzBuchen() {
               <span>
                 Auswahl:{" "}
                 <span className="font-medium">
-                  {selected.id} · {selected.bezeichnung}
+                  {selected.id} · {selected.name}
                 </span>{" "}
                 <span className="text-muted-foreground">
-                  ({selected.ausstattung.join(", ")} · {selected.etage})
+                  ({selected.equipment.join(", ")} · {selected.floor})
                 </span>
               </span>
             ) : (
@@ -181,16 +213,26 @@ export function ArbeitsplatzBuchen() {
           </div>
           <Button
             className="ml-auto"
-            disabled={!selected}
-            onClick={() => setConfirmed(true)}
+            disabled={!selected || booking === "loading" || booking === "done"}
+            onClick={handleConfirm}
           >
-            Bestätigen <ArrowRight className="size-4" />
+            {booking === "loading" ? (
+              "Wird gebucht…"
+            ) : (
+              <>
+                Bestätigen <ArrowRight className="size-4" />
+              </>
+            )}
           </Button>
         </div>
-        {confirmed && selected && (
+        {booking === "done" && selected && (
           <p className="mx-auto mt-2 flex max-w-5xl items-center gap-1.5 text-sm text-emerald-700">
-            <Check className="size-4" /> {selected.id} bestätigt – weiter zu
-            Schritt 2 (Buchung absenden).
+            <Check className="size-4" /> {selected.id} erfolgreich gebucht.
+          </p>
+        )}
+        {booking === "error" && (
+          <p className="mx-auto mt-2 max-w-5xl text-sm text-destructive">
+            Buchung fehlgeschlagen. Bitte erneut versuchen.
           </p>
         )}
       </div>
