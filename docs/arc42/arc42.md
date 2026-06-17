@@ -108,6 +108,10 @@ Architekturentscheidungen sind als Architecture Decision Records (ADR) dokumenti
 
 Diese Qualitätsszenarien definieren die wesentlichen Qualitätsmerkmale des Calvin-Systems.
 
+> Die Qualitätsszenarien in der tabellarischen arc42-Form (Environment / Source / Event /
+> Artifact / Response / Measure), inkl. Hosting-Kosten und Security, sind in
+> [Qualitätsanforderungen](../architektur/qualitätsanforderungen.md) dokumentiert.
+
 ### Qualitätsbaum
 
 1. **QS-2 (Doppelbuchungen)** - Kritisch, Kernfeature
