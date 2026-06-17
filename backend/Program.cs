@@ -41,6 +41,6 @@ app.MapLocations();
 app.MapConferenceRooms();
 app.MapWorkplaces();
 app.MapBookings();
-app.MapUsers();
+app.MapUsers(); // endpoints registered
 
 app.Run();

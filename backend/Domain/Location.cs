@@ -1,3 +1,3 @@
 namespace Calvin.BookingService.Domain;
 
-public record Location(string Id, string Name);
+public record Location(String Id, String Name);

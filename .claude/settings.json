@@ -9,10 +9,32 @@
         "commit": "",
         "pr": ""
     },
-    "hooks": {},
+    "env": {
+        "DOTNET_SYSTEM_GLOBALIZATION_INVARIANT": "1"
+    },
+    "hooks": {
+        "PostToolUse": [
+            {
+                "matcher": "Edit|Write",
+                "hooks": [
+                    {
+                        "type": "command",
+                        "command": "bash -c 'FILE=$(cat | jq -r \".tool_input.file_path // empty\" 2>/dev/null); [[ \"$FILE\" == *.cs ]] && DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=1 /home/coder/.dotnet/dotnet format /home/coder/workspace/backend/Calvin.BookingService.csproj --include \"$FILE\" 2>/dev/null; exit 0'",
+                        "statusMessage": "dotnet format …"
+                    },
+                    {
+                        "type": "command",
+                        "command": "bash -c 'FILE=$(cat | jq -r \".tool_input.file_path // empty\" 2>/dev/null); ([[ \"$FILE\" == *.ts ]] || [[ \"$FILE\" == *.tsx ]]) || exit 0; cd /home/coder/workspace/frontend && ./node_modules/.bin/eslint --fix \"$FILE\" 2>/dev/null; OUT=$(./node_modules/.bin/eslint --format compact \"$FILE\" 2>/dev/null); [[ -n \"$OUT\" ]] && jq -n --arg m \"ESLint errors remain after autofix:\\n$OUT\" \"{\\\"systemMessage\\\": \\$m}\"; exit 0'",
+                        "statusMessage": "eslint --fix …"
+                    }
+                ]
+            }
+        ]
+    },
     "enableAllProjectMcpServers": true,
     "enabledMcpjsonServers": [
         "context7",
-        "playwright"
+        "playwright",
+        "cclsp"
     ]
 }

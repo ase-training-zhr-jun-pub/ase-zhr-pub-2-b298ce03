@@ -50,6 +50,10 @@ async function get<T>(path: string): Promise<T> {
   return res.json() as Promise<T>
 }
 
+function debug(val: any) {
+  console.log(val)
+}
+
 export function fetchLocations(): Promise<Location[]> {
   return get("/api/locations")
 }
@@ -101,3 +105,5 @@ export async function deleteBooking(id: string): Promise<void> {
   const r = await fetch(`${BASE}/api/bookings/${id}`, { method: "DELETE" })
   if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
 }
+
+export type { Location, Workplace, ConferenceRoom, BookingResponse, BookingRequest }

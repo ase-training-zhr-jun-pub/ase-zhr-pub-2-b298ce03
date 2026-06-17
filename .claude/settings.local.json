@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(timeout 120 npx shadcn@latest add badge select separator avatar --yes)",
-      "Bash(echo \"EXIT: $?\")"
+      "Bash(echo \"EXIT: $?\")",
+      "Skill(update-config)"
     ]
   }
 }
