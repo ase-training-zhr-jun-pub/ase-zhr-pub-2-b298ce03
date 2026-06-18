@@ -32,6 +32,18 @@ export type BookingResponse = {
   location: string
   date: string
   timeRange: string
+  // extended fields
+  status: string // "Active" | "Cancelled"
+  isPast: boolean
+  resourceId: string
+  locationId: string
+  userId: string
+  dateIso: string
+  timeFrom: string | null
+  timeTo: string | null
+  title: string
+  notes: string | null
+  equipment: string[]
 }
 
 export type BookingRequest = {
@@ -100,5 +112,14 @@ export async function createBooking(req: BookingRequest): Promise<BookingRespons
 export async function deleteBooking(id: string): Promise<void> {
   const r = await fetch(`${BASE}/api/bookings/${id}`, { method: "DELETE" })
   if (!r.ok) throw new Error(`${r.status} ${r.statusText}`)
+}
+
+export async function cancelBooking(id: string): Promise<BookingResponse> {
+  const res = await fetch(`${BASE}/api/bookings/${id}/cancellation`, { method: "POST" })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({})) as { detail?: string }
+    throw new Error(err.detail ?? `${res.status} ${res.statusText}`)
+  }
+  return res.json() as Promise<BookingResponse>
 }
 
