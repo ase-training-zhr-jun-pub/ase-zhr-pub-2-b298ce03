@@ -146,3 +146,4 @@ export async function updateBooking(id: string, req: BookingUpdateRequest): Prom
   return res.json() as Promise<BookingResponse>
 }
 
+
