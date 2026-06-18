@@ -1,0 +1,42 @@
+- generic [ref=e3]:
+  - banner [ref=e4]:
+    - generic [ref=e5]:
+      - generic [ref=e6]: C
+      - generic [ref=e7]: Calvin
+    - generic [ref=e8]:
+      - generic [ref=e9]:
+        - generic [ref=e10]: Standort
+        - combobox [ref=e11]:
+          - generic [ref=e12]: Köln
+          - img: ▼
+        - textbox [ref=e13]: koeln
+      - generic [ref=e14]:
+        - generic [ref=e16]: AB
+        - generic [ref=e17]: Alex Berger
+  - generic [ref=e18]:
+    - complementary [ref=e19]:
+      - navigation [ref=e20]:
+        - link "Übersicht" [ref=e21] [cursor=pointer]:
+          - /url: /t/03d8e8236d6c7a37/s/b298ce03e0302728/proxy/5173
+          - img [ref=e22]
+          - text: Übersicht
+        - link "Raum buchen" [ref=e27] [cursor=pointer]:
+          - /url: /t/03d8e8236d6c7a37/s/b298ce03e0302728/proxy/5173/raeume
+          - img [ref=e28]
+          - text: Raum buchen
+        - link "Arbeitsplatz buchen" [ref=e31] [cursor=pointer]:
+          - /url: /t/03d8e8236d6c7a37/s/b298ce03e0302728/proxy/5173/arbeitsplatz-buchen
+          - img [ref=e32]
+          - text: Arbeitsplatz buchen
+        - link "Meine Buchungen" [ref=e35] [cursor=pointer]:
+          - /url: /t/03d8e8236d6c7a37/s/b298ce03e0302728/proxy/5173/meine-buchungen
+          - img [ref=e36]
+          - text: Meine Buchungen
+    - main [ref=e39]:
+      - generic [ref=e140]:
+        - generic [ref=e141]:
+          - heading "Buchungsdetails" [level=1] [ref=e142]
+          - paragraph [ref=e143]: Meetingtitel und weitere Details eingeben.
+        - generic [ref=e144]:
+          - generic [ref=e146]: In Arbeit
+          - generic [ref=e147]: Buchungsdetails werden im Rahmen von CLVN-017 und CLVN-018 umgesetzt.

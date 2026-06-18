@@ -1,5 +1,5 @@
 {
- "mcpServers": {
+  "mcpServers": {
     "context7": {
       "type": "http",
       "url": "https://mcp.context7.com/mcp"
@@ -15,6 +15,14 @@
         "/opt/playwright-browsers/chromium-1208/chrome-linux64/chrome"
       ],
       "env": {}
+    },
+    "cclsp": {
+      "type": "stdio",
+      "command": "npx",
+      "args": ["-y", "cclsp@latest"],
+      "env": {
+        "CCLSP_CONFIG_PATH": "/home/coder/workspace/.cclsp.json"
+      }
     }
   }
 }
