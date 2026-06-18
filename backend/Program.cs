@@ -55,3 +55,6 @@ app.MapBookings();
 app.MapUsers(); // endpoints registered
 
 app.Run();
+
+// Exposes the entry point to WebApplicationFactory in integration tests.
+public partial class Program { }
