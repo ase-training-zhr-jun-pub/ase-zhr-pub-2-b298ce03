@@ -1,10 +1,14 @@
 namespace Calvin.BookingService.Domain;
 
-public record ConferenceRoom(
-    string Id,
-    string Name,
-    int Capacity,
-    string[] Equipment,
-    bool Occupied,
-    string LocationId
-);
+// Occupied is a baseline availability flag used when no specific date is queried.
+// When a date (and optionally a time range) is supplied, occupancy is computed
+// from the active bookings instead.
+public class ConferenceRoom
+{
+    public string Id { get; set; } = "";
+    public string Name { get; set; } = "";
+    public int Capacity { get; set; }
+    public List<string> Equipment { get; set; } = new();
+    public bool Occupied { get; set; }
+    public string LocationId { get; set; } = "";
+}

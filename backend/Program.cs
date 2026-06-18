@@ -1,10 +1,14 @@
 using Calvin.BookingService.Data;
 using Calvin.BookingService.Endpoints;
+using Microsoft.EntityFrameworkCore;
 using Scalar.AspNetCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddSingleton<InMemoryStore>();
+// File-based SQLite storage (calvin.db). State persists across restarts.
+var connectionString = builder.Configuration.GetConnectionString("Calvin")
+    ?? "Data Source=calvin.db";
+builder.Services.AddDbContext<CalvinDbContext>(options => options.UseSqlite(connectionString));
 
 // Behind the Crucible proxy, frontend and backend share the same origin
 // (crucible.ch.innoq.io), so the browser sends no CORS preflight.
@@ -32,6 +36,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddOpenApi();
 
 var app = builder.Build();
+
+// Create and seed the database on startup.
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<CalvinDbContext>();
+    DbSeeder.EnsureSeeded(db);
+}
 
 app.UseCors();
 app.MapOpenApi();

@@ -1,5 +1,65 @@
 // Zentrale Mock-Daten für den Calvin-Prototyp. Kein Backend — alle Daten gemockt.
 
+export type ConferenceRoom = {
+  id: string
+  name: string
+  capacity: number
+  equipment: string[]
+  occupied: boolean
+  locationId: string
+}
+
+export const conferenceRooms: ConferenceRoom[] = [
+  {
+    id: "KR-KOE-01",
+    name: "Rheinblick",
+    capacity: 8,
+    equipment: ["Bildschirm", "Whiteboard", "Videokonferenz"],
+    occupied: false,
+    locationId: "koeln",
+  },
+  {
+    id: "KR-KOE-02",
+    name: "Stadtgarten",
+    capacity: 4,
+    equipment: ["Bildschirm", "Flipchart"],
+    occupied: true,
+    locationId: "koeln",
+  },
+  {
+    id: "KR-BER-01",
+    name: "Spreebogen",
+    capacity: 12,
+    equipment: ["Bildschirm", "Whiteboard", "Videokonferenz"],
+    occupied: false,
+    locationId: "berlin",
+  },
+  {
+    id: "KR-BER-02",
+    name: "Brandenburger",
+    capacity: 6,
+    equipment: ["Bildschirm", "Flipchart", "Whiteboard"],
+    occupied: false,
+    locationId: "berlin",
+  },
+  {
+    id: "KR-HAM-01",
+    name: "Speicherstadt",
+    capacity: 10,
+    equipment: ["Bildschirm", "Videokonferenz"],
+    occupied: true,
+    locationId: "hamburg",
+  },
+  {
+    id: "KR-MUC-01",
+    name: "Isar",
+    capacity: 8,
+    equipment: ["Bildschirm", "Whiteboard"],
+    occupied: false,
+    locationId: "muenchen",
+  },
+]
+
 export type Standort = {
   id: string
   name: string

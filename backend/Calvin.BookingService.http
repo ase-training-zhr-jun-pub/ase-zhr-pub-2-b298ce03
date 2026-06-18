@@ -1,6 +1,67 @@
-@Calvin.BookingService_HostAddress = http://localhost:5042
+@host = http://localhost:5000
 
-GET {{Calvin.BookingService_HostAddress}}/weatherforecast/
-Accept: application/json
+### Locations (CLVN-002)
+GET {{host}}/api/locations
 
-###
+### Conference rooms at a location (CLVN-003)
+GET {{host}}/api/conference-rooms?locationId=koeln
+
+### Filter rooms by capacity + equipment (CLVN-004/005/013)
+GET {{host}}/api/conference-rooms?locationId=koeln&minCapacity=6&equipment=Whiteboard,Videokonferenz&sort=-capacity
+
+### Room availability for a slot, with alternatives on conflict (CLVN-010/012)
+GET {{host}}/api/conference-rooms/KR-KOE-01/availability?date=2026-06-19&timeFrom=10:00&timeTo=11:30
+
+### Occupied slots of a room on a day (CLVN-011)
+GET {{host}}/api/conference-rooms/KR-KOE-01/bookings?date=2026-06-19
+
+### Workplaces for a location/date (CLVN-014)
+GET {{host}}/api/workplaces?locationId=koeln&date=2026-06-18
+
+### Test users for prototype login (CLVN-028/029)
+GET {{host}}/api/users
+
+### My bookings (CLVN-022/023)
+GET {{host}}/api/bookings?userId=alice
+
+### Booking detail (CLVN-024)
+GET {{host}}/api/bookings/CLVN-B-1002
+
+### Create a booking (CLVN-016..020)
+POST {{host}}/api/bookings
+Content-Type: application/json
+
+{
+  "type": "ConferenceRoom",
+  "resourceId": "KR-KOE-01",
+  "locationId": "koeln",
+  "userId": "bob",
+  "date": "2026-06-20",
+  "timeFrom": "14:00",
+  "timeTo": "15:00",
+  "title": "Architektur-Review",
+  "notes": "Bitte Beamer bereitstellen."
+}
+
+### Modify a booking (CLVN-027)
+PUT {{host}}/api/bookings/CLVN-B-1002
+Content-Type: application/json
+
+{
+  "type": "ConferenceRoom",
+  "resourceId": "KR-KOE-01",
+  "locationId": "koeln",
+  "date": "2026-06-19",
+  "timeFrom": "11:00",
+  "timeTo": "12:00",
+  "title": "Team-Sync (verschoben)"
+}
+
+### Export a booking as .ics (CLVN-025)
+GET {{host}}/api/bookings/CLVN-B-1002/export
+
+### Cancel a booking (CLVN-026)
+POST {{host}}/api/bookings/CLVN-B-1002/cancellation
+
+### Delete a booking (hard delete)
+DELETE {{host}}/api/bookings/CLVN-B-1002

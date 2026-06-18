@@ -65,6 +65,11 @@ storybook-static/
 backend/bin/
 backend/obj/
 
+# SQLite database (file-based storage, recreated/seeded on startup)
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+
 # Playwright / Cypress
 /playwright-report/
 /playwright/.cache/

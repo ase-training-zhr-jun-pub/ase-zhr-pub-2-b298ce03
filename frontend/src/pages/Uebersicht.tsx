@@ -19,7 +19,7 @@ export function Uebersicht() {
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Link to="/raum-buchen">
+        <Link to="/raeume">
           <Card className="h-full transition-colors hover:border-primary">
             <CardHeader>
               <DoorOpen className="size-6 text-primary" />

@@ -21,7 +21,7 @@ import { cn } from "@/lib/utils"
 
 const navItems = [
   { to: "/", label: "Übersicht", icon: LayoutDashboard, end: true },
-  { to: "/raum-buchen", label: "Raum buchen", icon: DoorOpen, end: false },
+  { to: "/raeume", label: "Raum buchen", icon: DoorOpen, end: false },
   {
     to: "/arbeitsplatz-buchen",
     label: "Arbeitsplatz buchen",

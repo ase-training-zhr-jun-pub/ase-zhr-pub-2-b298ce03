@@ -2,65 +2,75 @@ using Calvin.BookingService.Domain;
 
 namespace Calvin.BookingService.Data;
 
+// Realistic INNOQ master data. Kept consistent with the frontend mock data
+// (frontend/src/lib/mock-data.ts) so the wired app shows the same resources.
 public static class SeedData
 {
     public static List<Location> Locations() =>
     [
-        new("koeln",     "Köln"),
-        new("berlin",    "Berlin"),
-        new("hamburg",   "Hamburg"),
-        new("monheim",   "Monheim"),
-        new("muenchen",  "München"),
-        new("offenbach", "Offenbach"),
-        new("zuerich",   "Zürich"),
-        new("baar",      "Baar"),
+        new() { Id = "koeln",     Name = "Köln" },
+        new() { Id = "berlin",    Name = "Berlin" },
+        new() { Id = "hamburg",   Name = "Hamburg" },
+        new() { Id = "monheim",   Name = "Monheim" },
+        new() { Id = "muenchen",  Name = "München" },
+        new() { Id = "offenbach", Name = "Offenbach" },
+        new() { Id = "zuerich",   Name = "Zürich" },
+        new() { Id = "baar",      Name = "Baar" },
     ];
 
     public static List<ConferenceRoom> ConferenceRooms() =>
     [
-        new("KR-RHEINBLICK", "Konferenzraum Rheinblick", 12,
-            ["Videokonferenz", "Whiteboard", "Beamer"], false, "koeln"),
-        new("KR-DOM", "Konferenzraum Dom", 6,
-            ["Whiteboard"], false, "koeln"),
-        new("KR-HEUMARKT", "Konferenzraum Heumarkt", 8,
-            ["Videokonferenz", "Bildschirm"], false, "koeln"),
-        new("KR-BERLIN-1", "Konferenzraum Spree", 10,
-            ["Videokonferenz", "Whiteboard"], false, "berlin"),
-        new("KR-HH-1", "Konferenzraum Alster", 8,
-            ["Beamer", "Whiteboard"], false, "hamburg"),
-        new("KR-MUC-1", "Konferenzraum Isar", 12,
-            ["Videokonferenz", "Beamer"], false, "muenchen"),
+        new() { Id = "KR-KOE-01", Name = "Rheinblick",    Capacity = 8,
+                Equipment = ["Bildschirm", "Whiteboard", "Videokonferenz"], Occupied = false, LocationId = "koeln" },
+        new() { Id = "KR-KOE-02", Name = "Stadtgarten",   Capacity = 4,
+                Equipment = ["Bildschirm", "Flipchart"], Occupied = true, LocationId = "koeln" },
+        new() { Id = "KR-BER-01", Name = "Spreebogen",    Capacity = 12,
+                Equipment = ["Bildschirm", "Whiteboard", "Videokonferenz"], Occupied = false, LocationId = "berlin" },
+        new() { Id = "KR-BER-02", Name = "Brandenburger", Capacity = 6,
+                Equipment = ["Bildschirm", "Flipchart", "Whiteboard"], Occupied = false, LocationId = "berlin" },
+        new() { Id = "KR-HAM-01", Name = "Speicherstadt", Capacity = 10,
+                Equipment = ["Bildschirm", "Videokonferenz"], Occupied = true, LocationId = "hamburg" },
+        new() { Id = "KR-MUC-01", Name = "Isar",          Capacity = 8,
+                Equipment = ["Bildschirm", "Whiteboard"], Occupied = false, LocationId = "muenchen" },
     ];
 
     public static List<Workplace> Workplaces() =>
     [
-        new("AP-01", "Fensterplatz Nord", "Etage 1",
-            ["Höhenverstellbarer Tisch", "Fensterplatz"], false, "koeln"),
-        new("AP-02", "Teambereich", "Etage 1",
-            ["Dockingstation"], true, "koeln"),
-        new("AP-03", "Ruhezone", "Etage 2",
-            ["2 Monitore", "Höhenverstellbarer Tisch"], false, "koeln"),
-        new("AP-04", "Fokusplatz", "Etage 2",
-            ["2 Monitore", "Dockingstation"], false, "koeln"),
-        new("AP-05", "Gemeinschaftstisch", "Etage 2",
-            ["Großer Bildschirm"], true, "koeln"),
-        new("AP-06", "Einzelplatz Süd", "Etage 3",
-            ["Höhenverstellbarer Tisch", "Dockingstation"], false, "koeln"),
+        new() { Id = "AP-01", Name = "Fensterplatz Nord",  Floor = "Etage 1",
+                Equipment = ["Höhenverstellbarer Tisch", "Fensterplatz"], Occupied = false, LocationId = "koeln" },
+        new() { Id = "AP-02", Name = "Teambereich",        Floor = "Etage 1",
+                Equipment = ["Dockingstation"], Occupied = true, LocationId = "koeln" },
+        new() { Id = "AP-03", Name = "Ruhezone",           Floor = "Etage 2",
+                Equipment = ["2 Monitore", "Höhenverstellbarer Tisch"], Occupied = false, LocationId = "koeln" },
+        new() { Id = "AP-04", Name = "Fokusplatz",         Floor = "Etage 2",
+                Equipment = ["2 Monitore", "Dockingstation"], Occupied = false, LocationId = "koeln" },
+        new() { Id = "AP-05", Name = "Gemeinschaftstisch", Floor = "Etage 2",
+                Equipment = ["Großer Bildschirm"], Occupied = true, LocationId = "koeln" },
+        new() { Id = "AP-06", Name = "Einzelplatz Süd",    Floor = "Etage 3",
+                Equipment = ["Höhenverstellbarer Tisch", "Dockingstation"], Occupied = false, LocationId = "koeln" },
     ];
 
     public static List<Booking> Bookings() =>
     [
-        new("CLVN-B-1001", "Workplace", "AP-03", "koeln", "alice",
-            new DateOnly(2026, 6, 18), null, null),
-        new("CLVN-B-1002", "ConferenceRoom", "KR-RHEINBLICK", "koeln", "alice",
-            new DateOnly(2026, 6, 19),
-            new TimeOnly(10, 0), new TimeOnly(11, 30)),
+        new()
+        {
+            Id = "CLVN-B-1001", Type = BookingType.Workplace, ResourceId = "AP-03",
+            LocationId = "koeln", UserId = "alice", Date = new DateOnly(2026, 6, 18),
+            TimeFrom = null, TimeTo = null, Title = "Bürotag Köln", Status = BookingStatus.Active,
+        },
+        new()
+        {
+            Id = "CLVN-B-1002", Type = BookingType.ConferenceRoom, ResourceId = "KR-KOE-01",
+            LocationId = "koeln", UserId = "alice", Date = new DateOnly(2026, 6, 19),
+            TimeFrom = new TimeOnly(10, 0), TimeTo = new TimeOnly(11, 30),
+            Title = "Team-Sync", Notes = "Bitte Whiteboard freihalten.", Status = BookingStatus.Active,
+        },
     ];
 
     public static List<User> Users() =>
     [
-        new("alice",   "Alice Müller"),
-        new("bob",     "Bob Schmidt"),
-        new("charlie", "Charlie Weber"),
+        new() { Id = "alice",   Name = "Alice Müller" },
+        new() { Id = "bob",     Name = "Bob Schmidt" },
+        new() { Id = "charlie", Name = "Charlie Weber" },
     ];
 }

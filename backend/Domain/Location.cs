@@ -1,3 +1,7 @@
 namespace Calvin.BookingService.Domain;
 
-public record Location(String Id, String Name);
+public class Location
+{
+    public string Id { get; set; } = "";
+    public string Name { get; set; } = "";
+}

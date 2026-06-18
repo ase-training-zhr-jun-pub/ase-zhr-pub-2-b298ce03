@@ -8,13 +8,14 @@ public static class LocationsEndpoints
     {
         var group = app.MapGroup("/api/locations").WithTags("Locations");
 
-        group.MapGet("/", (InMemoryStore store) =>
-            Results.Ok(store.Locations));
+        // CLVN-002: all eight INNOQ locations for selection.
+        group.MapGet("/", (CalvinDbContext db) =>
+            Results.Ok(db.Locations.OrderBy(l => l.Name).ToList()));
 
-        group.MapGet("/{id}", (string id, InMemoryStore store) =>
-            store.Locations.Find(l => l.Id == id) is { } location
+        group.MapGet("/{id}", (string id, CalvinDbContext db) =>
+            db.Locations.FirstOrDefault(l => l.Id == id) is { } location
                 ? Results.Ok(location)
-                : Results.NotFound());
+                : Problems.NotFound($"Location '{id}' not found."));
 
         return app;
     }
