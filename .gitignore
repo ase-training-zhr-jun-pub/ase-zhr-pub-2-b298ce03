@@ -61,8 +61,20 @@ pnpm-debug.log*
 # Storybook
 storybook-static/
 
+# .NET
+**/bin/
+**/obj/
+
+# SQLite database (file-based storage, recreated/seeded on startup)
+backend/*.db
+backend/*.db-shm
+backend/*.db-wal
+
 # Playwright / Cypress
 /playwright-report/
 /playwright/.cache/
 /cypress/screenshots/
 /cypress/videos/
+
+# Claude Code internals
+.claude/worktrees/

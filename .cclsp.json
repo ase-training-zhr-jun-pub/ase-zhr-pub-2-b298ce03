@@ -1,0 +1,14 @@
+{
+  "servers": [
+    {
+      "extensions": ["ts", "tsx", "js", "jsx"],
+      "command": ["npx", "-y", "typescript-language-server", "--stdio"],
+      "rootDir": "frontend"
+    },
+    {
+      "extensions": ["cs"],
+      "command": ["/home/coder/.dotnet/tools/csharp-ls"],
+      "rootDir": "backend"
+    }
+  ]
+}
