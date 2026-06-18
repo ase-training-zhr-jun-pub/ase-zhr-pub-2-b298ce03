@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { Armchair, DoorOpen } from "lucide-react"
+import { Armchair, DoorOpen, Pencil } from "lucide-react"
 import { Card, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/alert-dialog"
 import { fetchBookings, cancelBooking, type BookingResponse } from "@/lib/api"
 import { CURRENT_USER_ID } from "@/lib/current-user"
+import { EditBookingDialog } from "@/components/EditBookingDialog"
 
 export function MeineBuchungen() {
   const [bookings, setBookings] = useState<BookingResponse[]>([])
@@ -23,6 +24,7 @@ export function MeineBuchungen() {
   const [cancellingId, setCancellingId] = useState<string | null>(null)
   const [successMessage, setSuccessMessage] = useState<string | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [editingBooking, setEditingBooking] = useState<BookingResponse | null>(null)
 
   useEffect(() => {
     fetchBookings(CURRENT_USER_ID)
@@ -46,7 +48,13 @@ export function MeineBuchungen() {
     }
   }
 
+  function handleSaved(updated: BookingResponse) {
+    setBookings((prev) => prev.map((b) => (b.id === updated.id ? updated : b)))
+    setEditingBooking(null)
+  }
+
   const activeBookings = bookings.filter((b) => b.status !== "Cancelled")
+
 
   return (
     <div className="mx-auto max-w-5xl space-y-6">
@@ -91,9 +99,20 @@ export function MeineBuchungen() {
                     {b.location} · {b.date} · {b.timeRange}
                   </p>
                 </div>
-                <Badge variant="secondary">
+                <Badge variant="secondary" className="shrink-0">
                   {b.type === "Workplace" ? "Arbeitsplatz" : "Raum"}
                 </Badge>
+                {b.type === "ConferenceRoom" && !b.isPast && b.status === "Active" && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="shrink-0"
+                    aria-label="Buchung bearbeiten"
+                    onClick={() => setEditingBooking(b)}
+                  >
+                    <Pencil className="size-4" />
+                  </Button>
+                )}
                 {!b.isPast && (
                   <AlertDialog>
                     <AlertDialogTrigger
@@ -129,6 +148,14 @@ export function MeineBuchungen() {
             </Card>
           ))}
         </div>
+      )}
+
+      {editingBooking && (
+        <EditBookingDialog
+          booking={editingBooking}
+          onClose={() => setEditingBooking(null)}
+          onSaved={handleSaved}
+        />
       )}
     </div>
   )

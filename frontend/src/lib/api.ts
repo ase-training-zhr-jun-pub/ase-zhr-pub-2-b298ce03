@@ -30,20 +30,30 @@ export type BookingResponse = {
   type: string
   resource: string
   location: string
-  date: string
-  timeRange: string
-  // extended fields
-  status: string // "Active" | "Cancelled"
-  isPast: boolean
+  date: string        // display: dd.MM.yyyy
+  timeRange: string   // display: "Ganztägig" | "10:00 – 11:30"
   resourceId: string
   locationId: string
   userId: string
-  dateIso: string
-  timeFrom: string | null
-  timeTo: string | null
+  dateIso: string     // yyyy-MM-dd
+  timeFrom: string | null   // HH:mm | null (all-day)
+  timeTo: string | null     // HH:mm | null (all-day)
   title: string
   notes: string | null
+  status: string      // "Active" | "Cancelled"
+  isPast: boolean
   equipment: string[]
+}
+
+export type BookingUpdateRequest = {
+  type: string
+  resourceId: string
+  locationId: string
+  date: string        // yyyy-MM-dd
+  timeFrom?: string   // HH:mm
+  timeTo?: string     // HH:mm
+  title?: string
+  notes?: string
 }
 
 export type BookingRequest = {
@@ -116,6 +126,19 @@ export async function deleteBooking(id: string): Promise<void> {
 
 export async function cancelBooking(id: string): Promise<BookingResponse> {
   const res = await fetch(`${BASE}/api/bookings/${id}/cancellation`, { method: "POST" })
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({})) as { detail?: string }
+    throw new Error(err.detail ?? `${res.status} ${res.statusText}`)
+  }
+  return res.json() as Promise<BookingResponse>
+}
+
+export async function updateBooking(id: string, req: BookingUpdateRequest): Promise<BookingResponse> {
+  const res = await fetch(`${BASE}/api/bookings/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(req),
+  })
   if (!res.ok) {
     const err = await res.json().catch(() => ({})) as { detail?: string }
     throw new Error(err.detail ?? `${res.status} ${res.statusText}`)
