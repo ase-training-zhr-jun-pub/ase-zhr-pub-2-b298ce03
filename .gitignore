@@ -75,3 +75,6 @@ backend/*.db-wal
 /playwright/.cache/
 /cypress/screenshots/
 /cypress/videos/
+
+# Claude Code internals
+.claude/worktrees/
