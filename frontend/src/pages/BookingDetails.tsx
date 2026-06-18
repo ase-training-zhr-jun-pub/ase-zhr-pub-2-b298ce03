@@ -1,10 +1,11 @@
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Button } from "@/components/ui/button"
-import type { ConferenceRoom, Location } from "@/lib/api"
+import { createBooking, type ConferenceRoom, type Location } from "@/lib/api"
+import { CURRENT_USER_ID } from "@/lib/current-user"
 
 type BookingState = {
   room: ConferenceRoom
@@ -23,6 +24,8 @@ export function BookingDetails() {
   const location = useLocation()
   const navigate = useNavigate()
   const state = location.state as BookingState | null
+  const [submitting, setSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState<string | null>(null)
 
   useEffect(() => {
     if (!state?.room) {
@@ -33,6 +36,26 @@ export function BookingDetails() {
   if (!state?.room) return null
 
   const { room, location: loc, date, timeFrom, timeTo } = state
+
+  async function handleSubmit() {
+    setSubmitting(true)
+    setSubmitError(null)
+    try {
+      await createBooking({
+        type: "ConferenceRoom",
+        resourceId: room.id,
+        locationId: loc?.id ?? "",
+        userId: CURRENT_USER_ID,
+        date,
+        timeFrom,
+        timeTo,
+      })
+      navigate("/meine-buchungen")
+    } catch (err) {
+      setSubmitError(err instanceof Error ? err.message : "Buchung konnte nicht gespeichert werden.")
+      setSubmitting(false)
+    }
+  }
 
   return (
     <div className="mx-auto max-w-2xl space-y-6">
@@ -92,12 +115,18 @@ export function BookingDetails() {
         </CardContent>
       </Card>
 
+      {submitError && (
+        <div className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {submitError}
+        </div>
+      )}
+
       <div className="flex gap-3">
-        <Button variant="outline" onClick={() => navigate(-1)}>
+        <Button variant="outline" onClick={() => navigate(-1)} disabled={submitting}>
           Zurück
         </Button>
-        <Button disabled className="flex-1">
-          Buchung absenden (CLVN-019)
+        <Button className="flex-1" onClick={handleSubmit} disabled={submitting}>
+          {submitting ? "Wird gespeichert…" : "Buchung absenden"}
         </Button>
       </div>
     </div>

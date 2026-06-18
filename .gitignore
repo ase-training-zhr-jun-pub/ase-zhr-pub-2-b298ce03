@@ -62,8 +62,8 @@ pnpm-debug.log*
 storybook-static/
 
 # .NET
-backend/bin/
-backend/obj/
+**/bin/
+**/obj/
 
 # SQLite database (file-based storage, recreated/seeded on startup)
 backend/*.db

@@ -84,7 +84,7 @@ export function MeineBuchungen() {
       ) : (
         <div className="space-y-3">
           {activeBookings.map((b) => (
-            <Card key={b.id}>
+            <Card key={b.id} data-testid="booking-item">
               <CardHeader className="flex-row items-center gap-3 space-y-0">
                 {b.type === "Workplace" ? (
                   <Armchair className="size-5 text-primary" />
